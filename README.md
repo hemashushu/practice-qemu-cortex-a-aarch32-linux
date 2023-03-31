@@ -5,12 +5,16 @@ Build a Cortex-A AArch32 development virtual machine with QEMU.
 Machine config:
 
 - machine: virt
-- cpu: Cortex-A7
+- cpu: Cortex-A15 with 4 cores
 - memory: 2GiB
+
+https://www.qemu.org/docs/master/system/arm/virt.html
 
 OS config:
 
 Debian _armhf_, ARM 32 bit with hardware floating point support.
+
+https://www.debian.org/distrib/netinst
 
 - - -
 
@@ -84,15 +88,15 @@ Here's how to install Debian.
 Note that this system is for development only, not for our daily use, so it should be kept as simple as possible. Just use the default settings for most of the steps.
 
 ```bash
-$ qemu-system-arm -M virt -cpu cortex-a7 -m 2G \
-  -kernel vmlinuz \
-  -initrd initrd.gz \
-  -drive if=none,file=build/hda.qcow2,format=qcow2,id=hd \
-  -device virtio-blk-device,drive=hd \
-  -netdev user,id=mynet \
-  -device virtio-net-device,netdev=mynet \
-  -nographic \
-  -no-reboot
+qemu-system-arm -machine virt -cpu cortex-a15 -smp 4 -m 2G \
+    -kernel vmlinuz \
+    -initrd initrd.gz \
+    -drive if=none,file=build/hda.qcow2,format=qcow2,id=hd \
+    -device virtio-blk-device,drive=hd \
+    -netdev user,id=mynet \
+    -device virtio-net-device,netdev=mynet \
+    -nographic \
+    -no-reboot
 ```
 
 Here are some key steps:
@@ -193,7 +197,7 @@ total 1.8G
 ## Boot into guest OS
 
 ```bash
-qemu-system-arm -machine virt -cpu cortex-a7 -m 2G \
+qemu-system-arm -machine virt -cpu cortex-a15 -smp 4 -m 2G \
     -kernel build/vmlinuz-5.10.0-21-armmp-lpae \
     -initrd build/initrd.img-5.10.0-21-armmp-lpae \
     -append "root=/dev/vda2 console=ttyAMA0" \
@@ -239,6 +243,32 @@ $ ssh yang@localhost -p 3222
 ```
 
 Replace "yang" above with your new non-privileged user name. The port `3222` is specified by the parameter `hostfwd=tcp::3222-:22` when you started QEMU, you can change it to another port. The purpose of this parameter is to redirect the host port `3222` to guest port `22`.
+
+Once the login is successful, we can check the base hardware information of the virtual machine, such as memory, hard disk and CPU:
+
+```bash
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           2.0Gi        48Mi       1.8Gi       0.0Ki       144Mi       1.8Gi
+Swap:          975Mi          0B       975Mi
+```
+
+```bash
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda2        30G  1.3G   28G   5% /
+/dev/vda1       470M   53M  393M  12% /boot
+...
+```
+
+```bash
+$ cat /proc/cpuinfo
+processor       : 0
+model name      : ARMv7 Processor rev 0 (v7l)
+BogoMIPS        : 125.00
+Features        : half thumb fastmult vfp edsp thumbee neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm
+...
+```
 
 ## Check your `sudo` privilegs
 

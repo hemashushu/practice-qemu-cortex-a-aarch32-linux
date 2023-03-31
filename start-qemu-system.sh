@@ -1,5 +1,5 @@
 #!/bin/bash
-qemu-system-arm -machine virt -cpu cortex-a7 -m 2G \
+qemu-system-arm -machine virt -cpu cortex-a15 -smp 4 -m 2G \
     -kernel build/vmlinuz-5.10.0-21-armmp-lpae \
     -initrd build/initrd.img-5.10.0-21-armmp-lpae \
     -append "root=/dev/vda2 console=ttyAMA0" \
