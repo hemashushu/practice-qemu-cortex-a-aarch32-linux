@@ -12,7 +12,25 @@ OS config:
 
 Debian _armhf_, ARM 32 bit with hardware floating point support.
 
-## Build
+- - -
+
+Table of Content
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=4 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Setup the virtual machine](#-setup-the-virtual-machine)
+- [Boot into guest OS](#-boot-into-guest-os)
+- [Configuration after first boot](#-configuration-after-first-boot)
+- [Login through SSH](#-login-through-ssh)
+- [Check your `sudo` privilegs](#-check-your-sudo-privilegs)
+- [Write a `Hello World!` program](#-write-a-hello-world-program)
+- [Upgrade the kernel](#-upgrade-the-kernel)
+
+<!-- /code_chunk_output -->
+
+## Setup the virtual machine
 
 1. Create a new folder named "aarch32-debian" or any other name you like, and then enter this folder.
 
@@ -48,6 +66,8 @@ This folder will be used to store the hard disk image of the virtual machine and
 ```bash
 $ mkdir build
 ```
+
+Just create this folder, don't change into it.
 
 4. Create a disk image.
 
@@ -170,7 +190,7 @@ total 1.8G
 -rw-r--r-- 1 yang yang 4.9M Mar 31 11:38 vmlinuz-5.10.0-21-armmp-lpae
 ```
 
-## Boot the virtual machine
+## Boot into guest OS
 
 ```bash
 qemu-system-arm -machine virt -cpu cortex-a7 -m 2G \
